@@ -1,0 +1,138 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+'use client';
+import {
+    Select,
+    Box,
+    Container,
+    Stack,
+    Text,
+    Button,
+    Heading,
+    SimpleGrid,
+    StackDivider,
+    List,
+    ListItem,
+    useColorModeValue,
+} from '@chakra-ui/react'
+
+import { Application, ApplicationDetails } from "@/domain/applications/application";
+import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { applicationDetailsOptions } from '@/consts/application-details-options';
+
+export default function ApplicationDetail({ params }: { params: { id: string } }) {
+
+    const [percentage, setPercentage] = useState(1)
+    const session = (useSession() as never) as ReturnType<typeof useSession> & { data: Session & { accessToken: string, tenantId: string } };
+    const [application, setApplication] = useState<Application>()
+    useEffect(() => {
+        if (session.data?.accessToken)
+            fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/applications/${params.id}`, {
+                headers: {
+                    'authorization': 'Bearer ' + session.data.accessToken,
+                    'x-tenant-id': session.data.tenantId
+                }
+            }).then(res => res.json()).then(res => setApplication(res));
+    }, [params.id, session]);
+
+    if (!application)
+        return null;
+    return (
+        <Container>
+            <SimpleGrid
+                columns={{ base: 1, lg: 1 }}
+                spacing={{ base: 8, md: 10 }}
+                py={{ base: 18, md: 24 }}>
+                <Stack spacing={{ base: 6, md: 10 }}>
+                    <Box as={'header'}>
+                        <Heading
+                            lineHeight={1.1}
+                            fontWeight={600}
+                            fontSize={{ base: '2xl', sm: '4xl', lg: '5xl' }}>
+                            {application.firstName} {application.lastName}
+                        </Heading>
+                    </Box>
+
+                    <Stack
+                        spacing={{ base: 4, sm: 6 }}
+                        direction={'column'}
+                        divider={
+                            <StackDivider borderColor={useColorModeValue('gray.200', 'gray.600')} />
+                        }>
+                        <Box>
+                            <Text
+                                fontSize={{ base: '16px', lg: '18px' }}
+                                color={useColorModeValue('yellow.500', 'yellow.300')}
+                                fontWeight={'500'}
+                                textTransform={'uppercase'}
+                                mb={'4'}>
+                                Kișisel Bilgiler
+                            </Text>
+
+                            <SimpleGrid columns={{ base: 1, md: 1 }}>
+                                <List spacing={1}>
+                                    {Object.keys(application).filter(x => x !== 'details').map((field) => (
+                                        <ListItem key={field}>
+                                            <Text as={'span'} fontWeight={'bold'}>
+                                                {field}:
+                                            </Text>{' '}
+                                            {application[field as keyof Application].toString()}
+                                        </ListItem>))}
+                                </List>
+                            </SimpleGrid>
+                        </Box>
+                        <Box>
+                            <Text
+                                fontSize={{ base: '16px', lg: '18px' }}
+                                color={useColorModeValue('yellow.500', 'yellow.300')}
+                                fontWeight={'500'}
+                                textTransform={'uppercase'}
+                                mb={'4'}>
+                                Detaylar
+                            </Text>
+
+                            <List spacing={2}>
+                                {Object.keys(application.details).map((field,) => (
+                                    <ListItem key={field}>
+                                        <Text as={'span'} fontWeight={'bold'}>
+                                            {applicationDetailsOptions.find(x => x.name == field)?.label ?? 'Seçilen ögünler'}:
+                                        </Text>{' '}
+                                        {application.details[field as keyof ApplicationDetails].toString()}
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </Box>
+                    </Stack>
+                    <Select placeholder='Oran' defaultValue={percentage} onChange={(e: { target: { value: string } }) => {
+                        setPercentage(Number(e.target.value));
+                    }}>
+                        {Array.from({ length: 4 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>{i + 1}</option>
+                        ))}
+                    </Select>
+                    <Button
+                        as={'a'}
+                        href={`${window.location.href}/preview?percentage=${percentage}`}
+                        rounded={'none'}
+                        w={'full'}
+                        mt={8}
+                        size={'lg'}
+                        py={'7'}
+                        bg={useColorModeValue('gray.900', 'gray.50')}
+                        color={useColorModeValue('white', 'gray.900')}
+                        textTransform={'uppercase'}
+                        _hover={{
+                            transform: 'translateY(2px)',
+                            boxShadow: 'lg',
+                        }}>
+                        Pdfi oluștur
+                    </Button>
+
+                </Stack>
+            </SimpleGrid>
+        </Container>
+    )
+}
+
+

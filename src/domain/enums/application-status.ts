@@ -1,0 +1,1 @@
+export enum ApplicationStatus { Pending, Completed }

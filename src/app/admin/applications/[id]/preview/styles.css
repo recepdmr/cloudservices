@@ -1,0 +1,22 @@
+@page {
+    margin: 20mm;
+}
+
+
+@media print {
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+    button {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+    }
+}

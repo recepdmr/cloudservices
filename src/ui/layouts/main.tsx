@@ -268,9 +268,9 @@ const NAV_ITEMS: Array<NavItem> = [
         label: 'Services',
         children: [
             {
-                label: 'Postgresql as a service',
+                label: 'Redis as a service',
                 subLabel: 'Full managed',
-                href: '/services/postgresql',
+                href: '/services/redis',
             },
             {
                 label: 'MongoDB as a service',

@@ -26,10 +26,13 @@ import {
 } from '@chakra-ui/icons'
 import React from 'react';
 import { Link } from '@chakra-ui/next-js';
+import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const { isOpen, onToggle } = useDisclosure()
     const { colorMode, toggleColorMode } = useColorMode()
+    const session = (useSession() as never) as ReturnType<typeof useSession> & { data: Session & { accessToken: string, tenantId: string } };
 
     return (
         <Box>
@@ -69,32 +72,38 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     </Flex>
                 </Flex>
 
+
                 <Stack
                     flex={{ base: 1, md: 0 }}
                     justify={'flex-end'}
                     direction={'row'}
                     spacing={6}>
-                    <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'/api/auth/signin'}>
-                        Sign In
-                    </Button>
-                    <Button
-                        as={'a'}
-                        display={{ base: 'none', md: 'inline-flex' }}
-                        fontSize={'sm'}
-                        fontWeight={600}
-                        color={'white'}
-                        bg={'pink.400'}
-                        href={'/api/auth/signin'}
-                        _hover={{
-                            bg: 'pink.300',
-                        }}>
-                        Sign Up
-                    </Button>
+                    {session?.data?.user?.email ? <span>Signed in as {session.data.user?.email}</span> :
+                        <>
+                            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'/api/auth/signin'}>
+                                Sign In
+                            </Button>
+                            <Button
+                                as={'a'}
+                                display={{ base: 'none', md: 'inline-flex' }}
+                                fontSize={'sm'}
+                                fontWeight={600}
+                                color={'white'}
+                                bg={'pink.400'}
+                                href={'/api/auth/signin'}
+                                _hover={{
+                                    bg: 'pink.300',
+                                }}>
+                                Sign Up
+                            </Button>
+                        </>
+                    }
                     <Button
                         onClick={toggleColorMode}>
                         {colorMode === 'light' ? 'light' : 'dark'}
                     </Button>
                 </Stack>
+
             </Flex>
             <Box>
                 {children}

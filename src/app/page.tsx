@@ -153,7 +153,7 @@ const GettingStarted = () => {
   )
 };
 
-export interface Contributor {
+interface Contributor {
   login?: string
   name: string
   avatar_url?: string
@@ -161,14 +161,14 @@ export interface Contributor {
   contributions?: string[]
 }
 
-export type OpenSourceProps = {
+type OpenSourceProps = {
   contributors: Contributor[]
   stargazers: string
   categoriesCount: number
   templatesCount?: number
 }
 
-export const OpenSource = ({
+const OpenSource = ({
   contributors,
   stargazers,
   categoriesCount,

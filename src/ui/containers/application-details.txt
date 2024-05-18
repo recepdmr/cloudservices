@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react'
 import QuestionRadio from '@/ui/components/question-radio';
 import BasicQuestionRadio from '@/ui/components/basic-question-radio';
-import { ApplicationDetailsOption, OptionType, applicationDetailsOptions } from '@/consts/application-details-options';
 import SelectCheckbox from '../components/select-checkbox';
 import { Application } from '@/domain/applications/application';
 

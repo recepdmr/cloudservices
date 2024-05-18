@@ -15,7 +15,7 @@ import {
     useColorModeValue,
 } from '@chakra-ui/react'
 
-import { Application, ApplicationDetails } from "@/domain/applications/application";
+import { Application } from "@/domain/applications/application";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";

@@ -1,7 +1,8 @@
-import { OptionType } from "@/consts/application-details-options";
+
 import { Checkbox, CheckboxGroup, CheckboxProps, FormControl, FormErrorMessage, FormLabel } from "@chakra-ui/react";
 import { Control, Controller, FieldError, FieldValues, Path } from "react-hook-form";
 
+export type OptionType = { label: string, value: number | string };
 
 interface Props<T extends FieldValues> {
     control: Control<T, any>

@@ -34,8 +34,7 @@ export default function App() {
           </Heading>
           <Stack spacing={5}>
             <Text color={'gray.500'} fontSize={{ md: 'lg' }} maxW={'2xl'}>
-              A growing collection of hand-crafted & responsive Chakra UI templates ready
-              to drop into your React project.
+              Production-ready cloud services
             </Text>
           </Stack>
           <Stack direction={{ base: 'column', sm: 'row' }} spacing={8}>

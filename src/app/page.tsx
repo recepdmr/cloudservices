@@ -1,15 +1,34 @@
-'use client';
 
+'use server'
 import { TextUnderline } from "@/ui/components/text-underline";
 import {
   useColorModeValue,
   useBreakpointValue, Stack, Container, Text, Heading, Button, Box, Flex, Icon, SimpleGrid, Tooltip, Wrap, WrapItem
 } from "@chakra-ui/react";
 import Link from "next/link";
-import Image from 'next/image';
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
-export default function App() {
+async function getData() {
+  const res = await fetch('http://144.91.88.143:3801/application/list', { next: { revalidate: 1 } })
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
+
+  return res.json()
+}
+
+export default async function Page() {
+  const data = await getData()
+
+  return <App />
+}
+
+'use client'
+function App() {
   return (
     <Box
       bg={useColorModeValue('gray.100', 'gray.900')}

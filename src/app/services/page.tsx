@@ -1,5 +1,6 @@
 'use client'
 
+import { useServices } from '@/contexts/services-context'
 import {
     Box,
     Button,
@@ -55,13 +56,8 @@ const Card = ({ heading, description, icon, href }: CardProps) => {
 }
 
 export default function gridListWith() {
-    const services = [{
-        name: "Redis",
-        slug: 'redis',
-    }, {
-        name: "MongoDB",
-        slug: 'mongodb'
-    }]
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { services } = useServices();
     return (
         <Box p={4}>
             <Stack spacing={4} as={Container} maxW={'3xl'} textAlign={'center'}>
@@ -80,11 +76,10 @@ export default function gridListWith() {
                             icon={undefined}
                             key={service.name}
                             heading={service.name}
-                            description={'Fully managed'}
-                            href={'/services/' + service.slug}
+                            description={`Fully managed ${service.name}`}
+                            href={'/services/' + service.name}
                         />
                     ))}
-
                 </Flex>
             </Container>
         </Box>

@@ -23,6 +23,7 @@ import { useEffect } from 'react';
 import { Log, LogLevel } from '@/domain/logs/log';
 import BasicQuestionRadio from '../../../ui/components/basic-question-radio';
 import SelectCheckbox from '@/ui/components/select-checkbox';
+import { useServices } from '@/contexts/services-context';
 
 const inValidMessage = "Invalid, please fill with correctly"
 const schema = z.object({
@@ -35,7 +36,9 @@ const schema = z.object({
 const endpoint: string = process.env.NEXT_PUBLIC_API_ENDPOINT!
 
 export default function ApplicationForm({ params }: { params: { slug: string } }) {
+    const { services } = useServices();
 
+    const currentService = services.find(x => x.name == params.slug);
     const toast = useToast()
     const {
         handleSubmit,
@@ -135,8 +138,9 @@ export default function ApplicationForm({ params }: { params: { slug: string } }
                     <FormLabel htmlFor='version'>Version</FormLabel>
                     <Select {...register('version', { valueAsNumber: true })}>
                         <option defaultChecked value={-1}>Select version</option>
-                        <option value={(1).toString()} defaultChecked>V1.0</option>
-                        <option value={(2).toString()} defaultChecked>V1.0</option>
+                        {currentService?.tags.map((tag) => (
+                            <option key={tag} value={tag} defaultChecked>{tag}</option>
+                        ))}
                     </Select>
                     {errors.version && (
                         <FormErrorMessage>

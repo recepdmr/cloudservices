@@ -28,6 +28,7 @@ import React from 'react';
 import { Link } from '@chakra-ui/next-js';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { ServiceItem, useServices } from '@/contexts/services-context';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const { isOpen, onToggle } = useDisclosure()
@@ -120,16 +121,17 @@ const DesktopNav = () => {
     const linkHoverColor = useColorModeValue('gray.800', 'white')
     const popoverContentBgColor = useColorModeValue('white', 'gray.800')
 
+    const { services } = useServices();
     return (
         <Stack direction={'row'} spacing={4}>
-            {NAV_ITEMS.map((navItem) => (
-                <Box key={navItem.label}>
+            {services.map((service) => (
+                <Box key={service.id}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
                         <PopoverTrigger>
                             <Box
                                 as="a"
                                 p={2}
-                                href={navItem.href ?? '#'}
+                                href={`/services/${service.name.toLowerCase()}`}
                                 fontSize={'sm'}
                                 fontWeight={500}
                                 color={linkColor}
@@ -137,11 +139,11 @@ const DesktopNav = () => {
                                     textDecoration: 'none',
                                     color: linkHoverColor,
                                 }}>
-                                {navItem.label}
+                                {service.name}
                             </Box>
                         </PopoverTrigger>
 
-                        {navItem.children && (
+                        {/* {navItem.children && (
                             <PopoverContent
                                 border={0}
                                 boxShadow={'xl'}
@@ -155,7 +157,7 @@ const DesktopNav = () => {
                                     ))}
                                 </Stack>
                             </PopoverContent>
-                        )}
+                        )} */}
                     </Popover>
                 </Box>
             ))}
@@ -163,11 +165,11 @@ const DesktopNav = () => {
     )
 }
 
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
+const DesktopSubNav = ({ name }: ServiceItem) => {
     return (
         <Box
             as="a"
-            href={href}
+            href={name}
             role={'group'}
             display={'block'}
             p={2}
@@ -179,9 +181,9 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
                         transition={'all .3s ease'}
                         _groupHover={{ color: 'pink.400' }}
                         fontWeight={500}>
-                        {label}
+                        {name}
                     </Text>
-                    <Text fontSize={'sm'}>{subLabel}</Text>
+                    <Text fontSize={'sm'}>{name}</Text>
                 </Box>
                 <Flex
                     transition={'all .3s ease'}
@@ -199,33 +201,35 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 }
 
 const MobileNav = () => {
+
+    const { services } = useServices();
     return (
         <Stack bg={useColorModeValue('white', 'gray.800')} p={4} display={{ md: 'none' }}>
-            {NAV_ITEMS.map((navItem) => (
-                <MobileNavItem key={navItem.label} {...navItem} />
+            {services.map((service: ServiceItem) => (
+                <MobileNavItem key={service.id} {...service} />
             ))}
         </Stack>
     )
 }
 
-const MobileNavItem = ({ label, children, href }: NavItem) => {
+const MobileNavItem = ({ name }: ServiceItem) => {
     const { isOpen, onToggle } = useDisclosure()
 
     return (
-        <Stack spacing={4} onClick={children && onToggle}>
+        <Stack spacing={4}>
             <Box
                 py={2}
                 as="a"
-                href={href ?? '#'}
+                href={`/services/${name.toLowerCase()}`}
                 justifyContent="space-between"
                 alignItems="center"
                 _hover={{
                     textDecoration: 'none',
                 }}>
                 <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
-                    {label}
+                    {name}
                 </Text>
-                {children && (
+                {/* {children && (
                     <Icon
                         as={ChevronDownIcon}
                         transition={'all .25s ease-in-out'}
@@ -233,7 +237,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                         w={6}
                         h={6}
                     />
-                )}
+                )} */}
             </Box>
 
             <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
@@ -244,43 +248,14 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
                     borderStyle={'solid'}
                     borderColor={useColorModeValue('gray.200', 'gray.700')}
                     align={'start'}>
-                    {children &&
+                    {/* {children &&
                         children.map((child) => (
                             <Box as="a" key={child.label} py={2} href={child.href}>
                                 {child.label}
                             </Box>
-                        ))}
+                        ))} */}
                 </Stack>
             </Collapse>
         </Stack>
     )
 }
-
-interface NavItem {
-    label: string
-    subLabel?: string
-    children?: Array<NavItem>
-    href?: string
-}
-
-const NAV_ITEMS: Array<NavItem> = [
-    {
-        label: 'Services',
-        children: [
-            {
-                label: 'Redis as a service',
-                subLabel: 'Full managed',
-                href: '/services/redis',
-            },
-            {
-                label: 'MongoDB as a service',
-                subLabel: 'Full managed',
-                href: '/services/mongodb',
-            },
-        ],
-    },
-    {
-        label: 'Technical support',
-        href: '/supports',
-    },
-]

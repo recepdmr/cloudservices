@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 async function getData() {
-  const res = await fetch(`${process.env.APP_SERVICE_ENDPOINT}/application/list`)
+  const res = await fetch(`${process.env.APP_SERVICE_ENDPOINT}/application/list`, { next: { revalidate: 60 } })
 
   if (!res.ok) {
     return [];
